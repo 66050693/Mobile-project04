@@ -55,6 +55,7 @@ def model_key(name: str, brand: str = "") -> str:
         if s.startswith(b + " "):
             s = s[len(b) + 1:]
             break
+    s = re.sub(r"\b(reno|fold|flip|magic|play)(\d)", r"\1 \2", s)   # Reno15 = Reno 15, Fold8 = Fold 8
     s = re.sub(r"\b[45]g\b", " ", s)
     s = re.sub(r"(\w)\s+(pro|plus|max|ultra|mini|lite)\b", r"\1 \2", s)
     return re.sub(r"\s+", " ", s).strip()

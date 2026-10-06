@@ -17,10 +17,13 @@ import ui
 from ai_service import ai_error_text, compact, explain, has_gemini_key
 from config import DEFAULT_INR_TO_THB, TOP_N
 from assistant_service import ChatTools, chat, parse_request
+from chat_rules import RuleChat
 from dataset_service import apply_images, apply_manual_specs, apply_prices, coverage, load_dataset, load_prices
-from firebase_auth import guest_allowed, login_user, register_user, reset_password
+from firebase_auth import guest_allowed, login_user, register_user
 from insight_service import budget_upgrade, value_frontier, why_not
-from ml_service import PriceModel, Segments, apply_ml, segment_phones, train_price_model
+from ml_service import (
+    DEAL_CHEAP, DEAL_PRICEY, PriceModel, Segments, apply_ml, segment_phones, thai_market_factor, train_price_model,
+)
 from scoring_service import (
     DIMENSIONS, USE_CASE_ICONS, USE_CASES, Request, filter_candidates, pros_cons, score, spec_text,
 )
@@ -210,8 +213,10 @@ def ml_chips(r) -> str:
         chips.append(f'<span class="chip">กลุ่ม: {ui.esc(r["segment"])}</span>')
     label, ratio = r.get("deal_label"), r.get("deal_ratio")
     if label:
-        kind = "good" if ratio <= 0.85 else "bad" if ratio >= 1.15 else ""
+        kind = "good" if ratio <= DEAL_CHEAP else "bad" if ratio >= DEAL_PRICEY else ""
         chips.append(f'<span class="chip {kind}">{ui.esc(label)} (ควรอยู่ที่ราว {ui.baht(r["fair_price_thb"])})</span>')
+    if r.get("data_source") and not str(r["data_source"]).startswith("Kaggle"):
+        chips.append('<span class="chip src">สเปกจากเว็บไซต์ทางการ</span>')
     return f'<div class="chips" style="margin-left:2.6rem">{"".join(chips)}</div>' if chips else ""
 
 
@@ -285,22 +290,21 @@ init_state()
 # ล็อกอิน
 # ---------------------------------------------------------------------------
 if st.session_state.user is None:
-    st.markdown("<div style='height:2.2vh'></div>", unsafe_allow_html=True)
-    _, mid, _ = st.columns([0.5, 6, 0.5])
-    with mid, st.container(border=True, key="login_card"):
-        left, right = st.columns([1, 1], gap="large", vertical_alignment="center")
+    ui.html_block(ui.login_art_css())
+    with st.container(key="login_card"):
+        left, right = st.columns([0.92, 1.08], gap="large")
         with right:
-            ui.html_block(ui.login_art())
+            ui.html_block('<div class="login-spacer"></div>')
         with left:
-            ui.html_block('<div class="login-brand"><div class="logo">📱</div><div><div class="name">Mobile AI Recommender</div>'
+            ui.html_block(f'<div class="login-brand">{ui.PHONE_ICON}<div><div class="name">Mobile AI Recommender</div>'
                           '<div class="tag">เลือกมือถือที่ใช่ ในงบที่มี</div></div></div>'
                           '<p class="login-title">ยินดีต้อนรับ</p>'
                           '<p class="login-sub">เข้าสู่ระบบเพื่อดู 5 รุ่นที่เหมาะกับงบและการใช้งานของคุณ</p>')
-            tab_login, tab_register, tab_reset = st.tabs(["เข้าสู่ระบบ", "สมัครสมาชิก", "ลืมรหัสผ่าน"])
+            tab_login, tab_register = st.tabs(["เข้าสู่ระบบ", "สมัครสมาชิก"])
             with tab_login:
-                with st.form("login_form"):
-                    email = st.text_input("อีเมล")
-                    password = st.text_input("รหัสผ่าน", type="password")
+                with st.form("login_form", border=False):
+                    email = st.text_input("อีเมล", placeholder="name@example.com")
+                    password = st.text_input("รหัสผ่าน", type="password", placeholder="รหัสผ่านของคุณ")
                     submitted = st.form_submit_button("เข้าสู่ระบบ", type="primary", use_container_width=True)
                 if submitted:
                     if not email or not password:
@@ -313,11 +317,11 @@ if st.session_state.user is None:
                             st.rerun()
                         st.error(result["message"])
             with tab_register:
-                with st.form("register_form"):
-                    reg_email = st.text_input("อีเมล", key="reg_email")
-                    reg_pw = st.text_input("รหัสผ่าน (อย่างน้อย 6 ตัว)", type="password")
-                    reg_pw2 = st.text_input("ยืนยันรหัสผ่าน", type="password")
-                    submitted = st.form_submit_button("สร้างบัญชี", use_container_width=True)
+                with st.form("register_form", border=False):
+                    reg_email = st.text_input("อีเมล", key="reg_email", placeholder="name@example.com")
+                    reg_pw = st.text_input("รหัสผ่าน (อย่างน้อย 6 ตัว)", type="password", placeholder="อย่างน้อย 6 ตัวอักษร")
+                    reg_pw2 = st.text_input("ยืนยันรหัสผ่าน", type="password", placeholder="พิมพ์รหัสผ่านอีกครั้ง")
+                    submitted = st.form_submit_button("สร้างบัญชี", type="primary", use_container_width=True)
                 if submitted:
                     if not reg_email or not reg_pw:
                         st.error("กรอกข้อมูลให้ครบ")
@@ -328,13 +332,6 @@ if st.session_state.user is None:
                             result = register_user(reg_email, reg_pw)
                         (st.success if result["ok"] else st.error)(
                             "สร้างบัญชีแล้ว เข้าสู่ระบบได้เลย" if result["ok"] else result["message"])
-            with tab_reset:
-                with st.form("reset_form"):
-                    reset_email = st.text_input("อีเมลที่สมัครไว้")
-                    sent = st.form_submit_button("ส่งลิงก์ตั้งรหัสใหม่", use_container_width=True)
-                if sent:
-                    r = reset_password(reset_email) if reset_email else {"ok": False, "message": "กรอกอีเมลก่อน"}
-                    (st.success if r["ok"] else st.error)(r["message"])
             if guest_allowed():
                 if st.button("ลองใช้โดยไม่ล็อกอิน (โหมดทดสอบ)", key="guest", use_container_width=True):
                     st.session_state.user = {"ok": True, "email": "ผู้ทดสอบ"}
@@ -448,7 +445,7 @@ if page == "find":
                 sub = ", ".join(x for x in (spec_text(r, "performance"), spec_text(r, "storage"),
                                             spec_text(r, "battery")) if x)
                 if not r["in_thailand"]:
-                    sub += " (ไม่อยู่ในรายชื่อขายในไทย)"
+                    sub += " (ยังไม่ยืนยันว่าขายในไทย)"
                 with head:
                     ui.html_block(ui.pick_header(i, r["name"], sub) + ml_chips(r))
                 with price:
@@ -511,27 +508,30 @@ if page == "find":
             ui.html_block(f'<div class="upgrade"><b>{ui.esc(head_txt)}</b><ul class="reason-list">{items}</ul></div>')
 
         st.subheader("ถาม AI ต่อ")
-        if not has_gemini_key():
-            st.info("ตั้งค่า GEMINI_API_KEY ใน Secrets เพื่อเปิดแชทถามต่อ เช่น “อันดับ 1 กับ 2 ต่างกันยังไง”")
-        else:
-            for m in st.session_state.chat:
-                with st.chat_message(m["role"]):
-                    st.markdown(m["content"])
-            with st.form("chat_form", clear_on_submit=True):
-                q1, q2 = st.columns([5, 1], vertical_alignment="bottom")
-                with q1:
-                    question = st.text_input("คำถาม", placeholder="เช่น อันดับ 1 กับ 2 ต่างกันยังไง, ถ้าเพิ่มงบ 3,000 ได้อะไร")
-                with q2:
-                    sent = st.form_submit_button("ถาม", use_container_width=True)
-            if sent and question.strip():
-                with st.spinner("AI กำลังตอบ..."):
+        use_ai = has_gemini_key()
+        if not use_ai:
+            st.caption("ยังไม่ได้ตั้งค่า GEMINI_API_KEY แชทจะตอบจากข้อมูลในระบบแทน (ถามได้ เช่น “Find X9 แพงไหม”, “อันดับ 1 กับ 2 ต่างกันยังไง”)")
+        for m in st.session_state.chat:
+            with st.chat_message(m["role"]):
+                st.markdown(m["content"])
+        with st.form("chat_form", clear_on_submit=True):
+            q1, q2 = st.columns([5, 1], vertical_alignment="bottom")
+            with q1:
+                question = st.text_input("คำถาม", placeholder="เช่น อันดับ 1 กับ 2 ต่างกันยังไง, Galaxy A57 แพงไหม, ถ้าเพิ่มงบได้อะไร")
+            with q2:
+                sent = st.form_submit_button("ถาม", use_container_width=True)
+        if sent and question.strip():
+            rules = RuleChat(phones, req, res["ranked"])
+            with st.spinner("กำลังตอบ..."):
+                if use_ai:
                     try:
-                        out = chat(question, st.session_state.chat, ChatTools(phones, req))
-                        answer = out["answer"]
-                    except Exception as err:
-                        answer = ai_error_text(err)
-                st.session_state.chat += [{"role": "user", "content": question}, {"role": "assistant", "content": answer}]
-                st.rerun()
+                        answer = chat(question, st.session_state.chat, ChatTools(phones, req))["answer"]
+                    except Exception as err:  # Gemini ล่ม/เกินโควตา: ตอบจากข้อมูลในระบบแทน ไม่ปล่อยให้แชทว่าง
+                        answer = (f"_{ai_error_text(err)} จึงตอบจากข้อมูลในระบบแทน_\n\n" + rules.answer(question))
+                else:
+                    answer = rules.answer(question)
+            st.session_state.chat += [{"role": "user", "content": question}, {"role": "assistant", "content": answer}]
+            st.rerun()
 
         caution = ai.get("caution") or "ราคาและโปรโมชันเปลี่ยนบ่อย ตรวจกับร้านค้าก่อนซื้อ"
         st.caption(caution + (f" ระบบตัดคำตอบของ AI ที่อ้างถึงรุ่นนอกรายการ {ai['dropped']} รายการ" if ai.get("dropped") else ""))
@@ -619,9 +619,11 @@ if page == "ml":
         st.plotly_chart(importance_chart(pm.importance), use_container_width=True, config={"displayModeBar": False})
         st.caption("วัดโดยสลับค่าทีละปัจจัยแบบสุ่ม แล้วดูว่าโมเดลทายแย่ลงเท่าไร ไม่ได้แปลว่าเป็นสาเหตุโดยตรง")
 
+    tf = thai_market_factor(phones, DEFAULT_INR_TO_THB)
     st.markdown("**นำไปใช้:** ทุกรุ่นได้ “ราคาที่ควรเป็น” จากโมเดลที่ไม่เคยเห็นรุ่นนั้น (5-fold cross-validation) "
-                "ถ้าราคาจริงต่ำกว่า 15% ขึ้นไปติดป้าย “ถูกกว่าสเปก” สูงกว่า 15% ติด “แพงกว่าสเปก” "
-                "และใช้เป็นคะแนนความคุ้มค่าในการจัดอันดับ")
+                f"แล้วปรับตามตลาดไทย ×{tf:.2f} (ราคาไทยจริงเทียบราคาอินเดียของรุ่นที่มีราคาไทย ค่ามัธยฐาน) "
+                f"ถ้าราคาจริงต่ำกว่า {round((1 - DEAL_CHEAP) * 100)}% ขึ้นไปติดป้าย “ถูกกว่าสเปก” "
+                f"สูงกว่า {round((DEAL_PRICEY - 1) * 100)}% ขึ้นไปติด “แพงกว่าสเปก” และใช้เป็นคะแนนความคุ้มค่าในการจัดอันดับ")
     pool = phones[phones["in_thailand"]] if st.session_state.thailand_only else phones
     deals = pool.dropna(subset=["deal_ratio"]).sort_values("deal_ratio")
     best, worst = deals.head(5), deals.tail(5).iloc[::-1]

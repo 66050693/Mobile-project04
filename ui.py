@@ -170,29 +170,69 @@ button:focus-visible, a:focus-visible {{ outline: 3px solid {TAG} !important; ou
 .upgrade b {{ color: {INDIGO}; }}
 .reason-list {{ margin: .3rem 0 0 1.1rem; line-height: 1.7; }}
 @media (max-width: 640px) {{
-  .login-art {{ display: none; }}
   .pick-sub {{ margin-left: 0; }} .price {{ text-align: left; margin-top: .4rem; }}
 }}
-/* ---------- หน้าล็อกอิน: กรอบขาวทึบ ตัวอักษรดำ อ่านง่าย ---------- */
-.st-key-login_card, [data-testid="stVerticalBlockBorderWrapper"]:has(> .st-key-login_card),
-[data-testid="stVerticalBlockBorderWrapper"]:has(> div > .st-key-login_card) {{
-  background: #fff !important; border-radius: 26px !important; border: 1px solid rgba(255,255,255,.9) !important;
-  box-shadow: 0 30px 70px rgba(53,58,95,.28), 0 8px 20px rgba(53,58,95,.12) !important; }}
-.st-key-login_card {{ padding: .6rem; }}
-.st-key-login_card, .st-key-login_card p, .st-key-login_card label, .st-key-login_card h1, .st-key-login_card h2 {{ color: #111 !important; }}
-.st-key-login_card input {{ background: #fff !important; color: #111 !important; border-radius: 10px !important; }}
-.st-key-login_card [data-baseweb="input"], .st-key-login_card [data-baseweb="base-input"] {{ border-radius: 10px !important;
-  border-color: #CDD4E2 !important; }}
-.login-brand {{ display: flex; align-items: center; gap: .6rem; margin: .4rem 0 1.2rem; }}
-.login-brand .logo {{ width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center;
-  background: linear-gradient(135deg, {NAVY}, {SKY}); color: #fff; font-size: 1.25rem; box-shadow: 0 6px 16px rgba(53,58,95,.3); }}
-.login-brand .name {{ font-weight: 700; color: #111; font-size: 1.05rem; line-height: 1.2; }}
-.login-brand .tag {{ color: #5A6275; font-size: .82rem; }}
-.login-title {{ font-size: 2rem; font-weight: 700; color: #111; margin: 0 0 .2rem; }}
-.login-sub {{ color: #5A6275; margin: 0 0 1rem; }}
-.login-art {{ height: 100%; min-height: 540px; border-radius: 20px; overflow: hidden;
-  box-shadow: inset 0 0 0 1px rgba(53,58,95,.06); }}
-.login-art svg {{ width: 100%; height: 100%; min-height: 540px; display: block; }}
+/* ---------- หน้าล็อกอิน: กรอบขาว ตัวอักษรดำ ฝั่งขวาเป็นคลื่นกระดาษที่ตัดลึกลงในกรอบ ---------- */
+.st-key-login_card {{ border-radius: 30px; padding: 2.6rem 2.6rem 2.4rem; overflow: hidden; max-width: 1040px; margin: 3vh auto 0;
+  box-shadow: 0 40px 90px -20px rgba(53,58,95,.38), 0 12px 28px rgba(53,58,95,.10), inset 0 0 0 1px rgba(255,255,255,.9);
+  animation: riseIn .7s cubic-bezier(.22,1,.36,1) both; }}
+.st-key-login_card p, .st-key-login_card label, .st-key-login_card [data-testid="stWidgetLabel"] p {{ color: #1A1D29 !important; }}
+.login-spacer {{ min-height: 520px; }}
+.login-brand {{ display: flex; align-items: center; gap: .55rem; margin: 0 0 2rem; }}
+.login-brand svg {{ width: 30px; height: 30px; flex: none; }}
+.login-brand .name {{ font-weight: 600; color: #1A1D29; font-size: 1.02rem; letter-spacing: .01em; line-height: 1.2; }}
+.login-brand .tag {{ color: #7A8094; font-size: .8rem; letter-spacing: .02em; }}
+.login-title {{ font-size: 2.1rem; font-weight: 600; color: #14172A !important; margin: 0 0 .25rem; letter-spacing: -.02em; text-align: center; }}
+.login-sub {{ color: #6B7186 !important; margin: 0 0 1.4rem; text-align: center; font-size: .95rem; }}
+/* แท็บ: อยู่กึ่งกลาง เส้นใต้บางๆ */
+.st-key-login_card [data-baseweb="tab-list"] {{ justify-content: center; gap: 2rem; border-bottom: 1px solid #E7EAF1; }}
+.st-key-login_card [data-baseweb="tab"] p {{ font-size: 1rem; font-weight: 500; }}
+.st-key-login_card [data-baseweb="tab"][aria-selected="true"] p {{ color: {NAVY} !important; font-weight: 600; }}
+.st-key-login_card [data-baseweb="tab-highlight"] {{ background: {NAVY}; height: 2px; }}
+/* ฟอร์มไม่มีกรอบ ช่องกรอกเห็นชัด (ขอบมน พื้นเทาอ่อน) */
+.st-key-login_card [data-testid="stForm"] {{ border: 0 !important; padding: .6rem 0 0 !important; background: transparent !important; }}
+.st-key-login_card [data-baseweb="input"] {{ background: #F6F7FB !important; border: 1.5px solid #CDD3E1 !important;
+  border-radius: 14px !important; min-height: 48px; transition: border-color .2s, box-shadow .2s, background .2s; }}
+.st-key-login_card [data-baseweb="input"] > div, .st-key-login_card [data-baseweb="base-input"],
+.st-key-login_card input {{ background: transparent !important; border: 0 !important; color: #14172A !important; }}
+.st-key-login_card input {{ font-size: 1rem !important; padding-left: .9rem !important; }}
+.st-key-login_card [data-baseweb="input"]:hover {{ border-color: #A9B3CC !important; }}
+.st-key-login_card [data-baseweb="input"]:focus-within {{ background: #fff !important; border-color: {NAVY} !important;
+  box-shadow: 0 0 0 4px rgba(62,76,148,.14) !important; }}
+/* ปุ่มเข้าสู่ระบบ/สร้างบัญชี: ตัวอักษรขาวอ่านชัด ชี้แล้วลอยขึ้นและเรืองแสง */
+.st-key-login_card button[kind="primaryFormSubmit"], .st-key-login_card [data-testid="stBaseButton-primaryFormSubmit"] {{
+  min-height: 50px; border-radius: 14px !important; margin-top: .4rem; letter-spacing: .02em;
+  background: linear-gradient(135deg, {NAVY} 0%, #4D5FA8 100%) !important;
+  box-shadow: 0 10px 22px -8px rgba(53,58,95,.55) !important; transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, filter .25s; }}
+.st-key-login_card button[kind="primaryFormSubmit"] p, .st-key-login_card [data-testid="stBaseButton-primaryFormSubmit"] p {{
+  color: #fff !important; font-weight: 600 !important; font-size: 1.02rem; }}
+.st-key-login_card button[kind="primaryFormSubmit"]:hover, .st-key-login_card [data-testid="stBaseButton-primaryFormSubmit"]:hover {{
+  transform: translateY(-2px); filter: brightness(1.08);
+  box-shadow: 0 16px 30px -10px rgba(53,58,95,.65), 0 0 0 4px rgba(158,186,243,.35) !important; }}
+.st-key-login_card button[kind="primaryFormSubmit"]:active {{ transform: translateY(0); }}
+.st-key-login_card [data-testid="stBaseButton-secondary"] {{ border-radius: 14px !important; min-height: 46px; }}
+@media (max-width: 760px) {{ .login-spacer {{ display: none; }} .st-key-login_card {{ padding: 1.6rem 1.2rem; }} }}
+
+/* ---------- minimal luxury: การเคลื่อนไหวนุ่มๆ ---------- */
+@keyframes riseIn {{ from {{ opacity: 0; transform: translateY(14px); }} to {{ opacity: 1; transform: none; }} }}
+.block-container {{ animation: riseIn .55s cubic-bezier(.22,1,.36,1) both; }}
+[data-testid="stVerticalBlockBorderWrapper"], .mini, .summary, .upgrade, [data-testid="stPlotlyChart"], .cmp {{
+  transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1); }}
+[data-testid="stVerticalBlockBorderWrapper"]:hover, .mini:hover {{ transform: translateY(-2px);
+  box-shadow: 0 18px 44px -12px rgba(53,58,95,.22), inset 0 1px 0 rgba(255,255,255,.9); }}
+button {{ transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, background .25s, border-color .25s, color .25s !important; }}
+button[kind="primary"]:hover, [data-testid="stBaseButton-primary"]:hover {{ transform: translateY(-1px);
+  box-shadow: 0 12px 26px -10px rgba(53,58,95,.6) !important; filter: brightness(1.06); }}
+button[kind="secondary"]:hover, [data-testid="stBaseButton-secondary"]:hover {{ border-color: {NAVY} !important; color: {NAVY} !important; }}
+[data-baseweb="input"], [data-baseweb="select"] > div, [data-baseweb="textarea"] {{ border-radius: 12px !important;
+  transition: border-color .2s, box-shadow .2s; }}
+[data-baseweb="input"]:focus-within, [data-baseweb="textarea"]:focus-within {{ border-color: {NAVY} !important;
+  box-shadow: 0 0 0 3px rgba(62,76,148,.12); }}
+[data-testid="stVerticalBlockBorderWrapper"] [data-testid="stVerticalBlockBorderWrapper"]:hover {{ transform: none; box-shadow: none; }}
+.hero h1 {{ font-weight: 600 !important; letter-spacing: -.025em; }}
+h2, h3, [data-testid="stHeading"] h3 {{ font-weight: 600 !important; letter-spacing: -.015em; }}
+.chip {{ transition: background .2s, border-color .2s; }}
+.chip.src {{ border-color: #D6DDF0; background: #F2F5FC; color: {INDIGO}; }}
 @media (prefers-reduced-motion: reduce) {{ * {{ transition: none !important; animation: none !important; }} }}
 </style>
 """
@@ -288,6 +328,11 @@ section[data-testid="stSidebar"] [class*="st-key-nav_"] button > div, .st-key-lo
     return f"<style>{css}</style>"
 
 
+PHONE_ICON = (f'<svg viewBox="0 0 24 24" fill="none" stroke="{NAVY}" stroke-width="1.6" stroke-linecap="round" '
+              'stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.6"/>'
+              f'<path d="M10.5 5.2h3"/><circle cx="12" cy="18.2" r=".9" fill="{NAVY}" stroke="none"/></svg>')
+
+
 def profile_block(email: str) -> str:
     initial = esc((email or "?").strip()[:1].upper() or "?")
     return (f'<div class="profile" title="{esc(email)}"><div class="avatar" aria-hidden="true">{initial}</div>'
@@ -317,32 +362,43 @@ def _wave_path(a, b, amp, waves, close):
     return d
 
 
-def login_art() -> str:
-    """ภาพตกแต่งฝั่งขวาของหน้าล็อกอิน: กระดาษตัดซ้อนชั้นเป็นคลื่น ไล่สีตาม palette (วาดเอง ไม่ใช้รูปภายนอก)"""
-    W, H = 400, 560
-    layers = [  # (จุดเริ่ม, จุดจบ, ความสูงคลื่น, จำนวนลูกคลื่น, สี)
-        ((250, 0), (W, 170), 22, 2, "#DCE6F8"),
-        ((185, 0), (W, 265), 26, 2, "#B9CDF4"),
-        ((120, 0), (W, 370), 30, 3, SKY),
-        ((55, 0), (W, 470), 30, 3, "#7E97D4"),
-        ((0, 60), (W, 560), 32, 3, "#5D72AE"),
-        ((0, 190), (300, H), 28, 2, "#46507F"),
-        ((0, 330), (190, H), 22, 2, NAVY),
+def login_art_svg() -> str:
+    """ภาพตกแต่งหน้าล็อกอิน: คลื่นกระดาษซ้อนชั้นไล่สีตาม palette และขอบซ้ายเป็นกระดาษสีขาวหลายชั้น
+    ให้ดูเหมือนตัดลึกลงไปในเนื้อกรอบล็อกอิน (วาดเอง ไม่ใช้รูปภายนอก)"""
+    W, H = 560, 680
+    blue = [  # (จุดเริ่ม, จุดจบ, ความสูงคลื่น, จำนวนลูกคลื่น, สี) จากชั้นตื้นไปชั้นลึก
+        ((330, 0), (W, 190), 22, 2, "#DCE6F8"),
+        ((265, 0), (W, 300), 26, 2, "#B9CDF4"),
+        ((200, 0), (W, 420), 30, 3, SKY),
+        ((140, 0), (W, 540), 30, 3, "#7E97D4"),
+        ((90, 70), (W, H), 32, 3, "#5D72AE"),
+        ((90, 230), (420, H), 28, 2, "#46507F"),
+        ((90, 400), (300, H), 22, 2, NAVY),
     ]
     paths = []
-    for a, b, amp, waves, color in layers:
-        if b[0] == W:   # จบที่ขอบขวา: ปิดรูปผ่านมุมขวาล่าง ซ้ายล่าง (และซ้ายบนถ้าเริ่มที่ขอบบน)
-            close = [(W, H), (0, H)] + ([(0, 0)] if a[1] == 0 else [])
-        else:           # เริ่มขอบซ้าย จบขอบล่าง
-            close = [(0, H)]
-        paths.append(f'<path d="{_wave_path(a, b, amp, waves, close)}" fill="{color}" filter="url(#paper)"/>')
-    svg = (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" '
-           f'role="img" aria-label="ภาพตกแต่งคลื่นกระดาษสีน้ำเงิน">'
-           f'<defs><filter id="paper" x="-20%" y="-20%" width="140%" height="140%">'
-           f'<feDropShadow dx="-5" dy="7" stdDeviation="7" flood-color="#1B1F3A" flood-opacity=".35"/></filter></defs>'
-           f'<rect width="{W}" height="{H}" fill="#F5F3EE"/>{"".join(paths)}</svg>')
-    return f'<div class="login-art">{svg}</div>'
+    for a, b, amp, waves, color in blue:
+        if b[0] == W:
+            close = [(W, H), (0, H)] + ([(0, 0)] if a[1] == 0 else [(0, a[1])])
+        else:
+            close = [(0, H), (0, a[1])]
+        paths.append(f'<path d="{_wave_path(a, b, amp, waves, close)}" fill="{color}" filter="url(#deep)"/>')
+    # กระดาษขาวด้านหน้า (ซ้าย) 3 ชั้น ขอบเป็นคลื่นแนวตั้ง เงาตกไปทางขวา = ดูเป็นเนื้อเดียวกับกรอบ
+    paper = [((205, 0), (150, H), 26, 2, "#E6EAF3"), ((150, 0), (95, H), 30, 2, "#F1F3F8"), ((92, 0), (40, H), 26, 2, "#FFFFFF")]
+    for a, b, amp, waves, color in paper:
+        paths.append(f'<path d="{_wave_path(a, b, amp, waves, [(0, H), (0, 0)])}" fill="{color}" filter="url(#lift)"/>')
+    return (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="xMinYMid slice" xmlns="http://www.w3.org/2000/svg">'
+            f'<defs><filter id="deep" x="-20%" y="-20%" width="140%" height="140%">'
+            f'<feDropShadow dx="-6" dy="8" stdDeviation="8" flood-color="#1B1F3A" flood-opacity=".38"/></filter>'
+            f'<filter id="lift" x="-20%" y="-10%" width="150%" height="120%">'
+            f'<feDropShadow dx="10" dy="4" stdDeviation="10" flood-color="#1B1F3A" flood-opacity=".22"/></filter></defs>'
+            f'<rect width="{W}" height="{H}" fill="#F5F3EE"/>{"".join(paths)}</svg>')
 
+
+def login_art_css() -> str:
+    """ใส่ภาพเป็นพื้นหลังฝั่งขวาของกรอบล็อกอิน (ชิดขอบบน/ขวา/ล่าง และโค้งตามมุมกรอบ)"""
+    uri = "data:image/svg+xml;utf8," + urllib.parse.quote(login_art_svg())
+    return (f"<style>.st-key-login_card {{ background: #fff url(\"{uri}\") right center / 54% 100% no-repeat !important; }}"
+            "@media (max-width: 760px) { .st-key-login_card { background-image: none !important; } }</style>")
 
 
 def esc(text) -> str:

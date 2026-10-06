@@ -1,12 +1,18 @@
 {
   "policy": "official_thailand_store",
-  "updated": "2026-10-03",
+  "updated": "2026-10-05",
   "sources": [
     "https://www.apple.com/th/iphone/",
     "https://www.samsung.com/th/smartphones/all-smartphones/",
     "https://www.mi.com/th/",
     "https://www.oppo.com/th/smartphones/",
-    "https://shop.vivo.com/th/products/phone?categoryId=4"
+    "https://shop.vivo.com/th/products/phone?categoryId=4",
+    "https://shop.vivo.com/th/products/phone?categoryId=60",
+    "https://www.realme.com/th/",
+    "https://www.iqoo.com/th/",
+    "https://www.bnn.in.th/ (Infinix/TECNO)",
+    "https://www.tecno-mobile.com/th/",
+    "https://www.honor.com/th/phones/"
   ],
   "models": {
     "Apple": [
@@ -60,6 +66,55 @@
       "X300 Ultra",
       "X300",
       "X Fold5"
+    ],
+    "iQOO": [
+      "iQOO 15",
+      "iQOO 15R",
+      "iQOO Neo 10 5G",
+      "iQOO Z11",
+      "iQOO Z11x"
+    ],
+    "realme": [
+      "realme 16 Pro+ 5G",
+      "realme 16 Pro 5G",
+      "realme 16 5G",
+      "realme P4 Power 5G",
+      "realme 15 Pro 5G",
+      "realme 15T",
+      "realme GT 7",
+      "realme C100 5G",
+      "realme C85 5G"
+    ],
+    "Infinix": [
+      "Infinix NOTE 60 Pro 5G",
+      "Infinix GT 50 Pro 5G",
+      "Infinix NOTE Edge 5G",
+      "Infinix GT 30 5G",
+      "Infinix Hot 70",
+      "Infinix SMART 20"
+    ],
+    "TECNO": [
+      "POVA 8 Pro 5G",
+      "POVA 8 Pro 5G Tonino Lamborghini Limited Edition",
+      "POVA 8 5G",
+      "POVA 7 Ultra 5G",
+      "POVA 7 5G",
+      "SPARK 50 5G",
+      "Spark 50C",
+      "SPARK 40 Pro",
+      "SPARK 40 5G",
+      "SPARK Go 3"
+    ],
+    "HONOR": [
+      "HONOR Magic V6",
+      "HONOR Magic8 Pro",
+      "HONOR 600 Pro",
+      "HONOR 600",
+      "HONOR 600 Lite",
+      "HONOR X9d",
+      "HONOR X7e",
+      "HONOR X6e",
+      "HONOR Play10"
     ]
   }
 }

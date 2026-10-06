@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from config import DATASET_PATH, IMAGES_PATH, MANUAL_SPECS_PATH, PRICES_PATH
+from config import DATASET_PATH, EXTRA_SPECS_PATH, IMAGES_PATH, MANUAL_SPECS_PATH, PRICES_PATH
 from thailand_filter import catalog_models, family, match_thai, model_key, variant_label
 
 COLUMN_MAP = {
@@ -79,20 +79,35 @@ def _short_name(name: str, brand_raw: str) -> str:
     return s
 
 
-def load_dataset(path: Path = DATASET_PATH) -> pd.DataFrame:
-    """1 แถวต่อรุ่น (รวมรุ่นย่อยแล้ว) พร้อมคอลัมน์มาตรฐาน"""
+def load_dataset(path: Path = DATASET_PATH, extra_path: Path | None = EXTRA_SPECS_PATH) -> pd.DataFrame:
+    """1 แถวต่อรุ่น (รวมรุ่นย่อยแล้ว) พร้อมคอลัมน์มาตรฐาน
+
+    รวมกับ data/specs_thai_extra.csv: รุ่นที่ขายในไทยแต่ dataset ไม่มี (สเปกจากเว็บทางการ ไม่มีราคาอินเดีย
+    จึงไม่ใช้ฝึกโมเดลราคา แต่ใช้จัดอันดับด้วยราคาไทยได้ตามปกติ)
+    """
     raw = pd.read_csv(path)
     missing = [c for c in ("brand_name", "model", "price") if c not in raw.columns]
     if missing:
         raise ValueError(f"ไฟล์ dataset ขาดคอลัมน์ {missing}")
-    df = raw.rename(columns=COLUMN_MAP)[[c for c in COLUMN_MAP.values() if c in raw.rename(columns=COLUMN_MAP).columns]]
+    raw["data_source"] = "Kaggle (Smartprix)"
+    raw["spec_url"] = ""
+    if extra_path is not None and Path(extra_path).exists():
+        extra = pd.read_csv(extra_path, encoding="utf-8-sig", dtype=str).fillna("")
+        extra = extra[extra["model"].str.strip() != ""].copy()
+        extra["price"] = np.nan
+        extra["data_source"] = "เว็บไซต์ทางการของแบรนด์"
+        extra["spec_url"] = extra.get("source", "")
+        extra = extra.replace("", np.nan)
+        raw = pd.concat([raw, extra[[c for c in extra.columns if c in raw.columns]]], ignore_index=True)
+    renamed = raw.rename(columns=COLUMN_MAP)
+    df = renamed[[c for c in list(COLUMN_MAP.values()) + ["data_source", "spec_url"] if c in renamed.columns]]
     for col in NUMERIC:
         if col in df:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     for col in ("has_5g", "has_nfc", "has_ir"):
         if col in df:
             df[col] = df[col].astype(str).str.lower().isin({"true", "1", "yes"})
-    df = df[df["price_inr"] > 0].copy()
+    df = df[(df["price_inr"] > 0) | (df["data_source"] != "Kaggle (Smartprix)")].copy()
     # ค่าที่เป็นไปไม่ได้ทางกายภาพ (พิมพ์ผิดใน dataset) ให้ถือว่าไม่มีข้อมูล
     for col, (lo, hi) in SANE_RANGES.items():
         if col in df:
@@ -136,7 +151,7 @@ def apply_manual_specs(df: pd.DataFrame, path: Path = MANUAL_SPECS_PATH) -> pd.D
         for col, value in row.items():
             if col in out.columns and col not in ("brand", "model") and pd.notna(value) and str(value).strip():
                 out.at[out.index[i], col] = value
-    out["perf_score"] = [p if pd.notna(p) else chip_score(c) for p, c in zip(out["perf_score"], out["chipset"])]
+    out["perf_score"] = out["chipset"].map(chip_score)  # คำนวณใหม่เผื่อมีการแก้ชื่อชิป
     return out
 
 

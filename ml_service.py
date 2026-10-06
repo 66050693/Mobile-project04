@@ -24,6 +24,8 @@ from sklearn.model_selection import KFold, cross_val_predict, train_test_split
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 
+from config import DEFAULT_INR_TO_THB  # noqa: E402
+
 SEED = 42
 NUMERIC_FEATURES = {
     "perf_score": "ประสิทธิภาพชิป", "ram_gb": "RAM", "storage_gb": "ความจุ", "camera_mp": "กล้องหลัก",
@@ -32,7 +34,9 @@ NUMERIC_FEATURES = {
 }
 FLAG_FEATURES = {"has_5g": "5G", "has_nfc": "NFC", "has_ir": "IR Blaster"}
 MIN_BRAND_ROWS = 8          # แบรนด์ที่มีน้อยกว่านี้รวมเป็น "อื่นๆ"
-DEAL_CHEAP, DEAL_PRICEY = 0.85, 1.15
+DEAL_CHEAP, DEAL_PRICEY = 0.80, 1.25   # ช่วง "ราคาสมเหตุสมผล" กว้างขึ้น (โมเดลคลาดเฉลี่ยราว ±19%)
+THAI_FACTOR_MIN_ROWS = 5                # ต้องมีราคาไทยอย่างน้อยกี่รุ่นถึงจะปรับค่าตามตลาดไทย
+THAI_FACTOR_RANGE = (0.8, 1.5)          # กันค่าปรับผิดปกติเมื่อราคาไทยมีน้อย
 CLUSTER_FEATURES = ["perf_score", "ram_gb", "storage_gb", "camera_mp", "battery_mah", "charging_w", "refresh_hz",
                     "log_price"]
 
@@ -80,8 +84,8 @@ class PriceModel:
 
 def _model() -> object:
     return make_pipeline(SimpleImputer(strategy="median", add_indicator=True),
-                         RandomForestRegressor(n_estimators=200, min_samples_leaf=2, max_features=0.5,
-                                               random_state=SEED, n_jobs=-1))
+                         RandomForestRegressor(n_estimators=120, min_samples_leaf=2, max_features=0.5,
+                                               random_state=SEED, n_jobs=1))
 
 
 def _scores(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
@@ -93,7 +97,7 @@ def _scores(y_true: np.ndarray, y_pred: np.ndarray) -> dict:
 
 def train_price_model(df: pd.DataFrame) -> PriceModel:
     d = df[df["price_inr"] > 0].copy()
-    X, _ = make_features(d)
+    X, brands = make_features(d)
     y = np.log(d["price_inr"].to_numpy(float))
     X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=0.2, random_state=SEED)
     model = _model().fit(X_tr, y_tr)
@@ -102,7 +106,7 @@ def train_price_model(df: pd.DataFrame) -> PriceModel:
     metrics = _scores(true_te, pred_te)
     baseline = _scores(true_te, np.full_like(true_te, np.exp(np.median(y_tr))))
 
-    perm = permutation_importance(model, X_te, y_te, n_repeats=5, random_state=SEED, n_jobs=-1)
+    perm = permutation_importance(model, X_te, y_te, n_repeats=3, random_state=SEED, n_jobs=1)
     imp = pd.DataFrame({"feature": X.columns, "value": np.clip(perm.importances_mean, 0, None)})
     imp["group"] = imp["feature"].map(feature_group)
     imp = imp.groupby("group", as_index=False)["value"].sum()
@@ -110,9 +114,16 @@ def train_price_model(df: pd.DataFrame) -> PriceModel:
     imp = imp.sort_values("percent", ascending=False).reset_index(drop=True)
 
     oof = cross_val_predict(_model(), X, y, cv=KFold(5, shuffle=True, random_state=SEED))
+    fair = pd.Series(np.exp(oof), index=d.index)
+    # รุ่นที่ไม่มีราคาอินเดีย (สเปกจากเว็บทางการ): ใช้โมเดลที่ฝึกด้วยข้อมูลทั้งหมดทายราคาที่ควรเป็น
+    rest = df[~(df["price_inr"] > 0)]
+    if len(rest):
+        Xr, _ = make_features(rest, brands)
+        final = _model().fit(X, y)
+        fair = pd.concat([fair, pd.Series(np.exp(final.predict(Xr[X.columns])), index=rest.index)])
     test_pred = pd.DataFrame({"name": d.loc[X_te.index, "name"].to_numpy(), "actual": true_te, "predicted": pred_te})
     return PriceModel(metrics=metrics, baseline=baseline, importance=imp[["group", "percent"]], test_pred=test_pred,
-                      fair_inr=pd.Series(np.exp(oof), index=d.index), n_train=len(X_tr), n_test=len(X_te),
+                      fair_inr=fair, n_train=len(X_tr), n_test=len(X_te),
                       features=list(X.columns))
 
 
@@ -161,6 +172,9 @@ def _name_clusters(profile: pd.DataFrame, z: pd.DataFrame) -> dict[int, str]:
 
 def segment_phones(df: pd.DataFrame, k_range: range = range(4, 8)) -> Segments:
     d = df.copy()
+    # รุ่นที่ไม่มีราคาอินเดีย ใช้ราคาไทยแปลงกลับเป็นรูปีโดยประมาณ (เพื่อจัดกลุ่มระดับราคาได้)
+    if "price_thb" in d:
+        d["price_inr"] = d["price_inr"].fillna(d["price_thb"] / DEFAULT_INR_TO_THB)
     d["log_price"] = np.log(d["price_inr"])
     X = d[CLUSTER_FEATURES].apply(pd.to_numeric, errors="coerce")
     X = X.fillna(X.median())
@@ -192,10 +206,29 @@ def segment_phones(df: pd.DataFrame, k_range: range = range(4, 8)) -> Segments:
 # ---------------------------------------------------------------------------
 # รวมผล ML เข้ากับตารางมือถือ
 # ---------------------------------------------------------------------------
+def thai_market_factor(phones: pd.DataFrame, inr_to_thb: float) -> float:
+    """ราคาไทยแพง/ถูกกว่าอินเดียกี่เท่า: ค่ามัธยฐานของ (ราคาไทยจริง ÷ ราคาอินเดียแปลงเป็นบาท) จากรุ่นที่มีราคาไทย
+    ใช้ปรับ “ราคาที่ควรเป็น” ซึ่งโมเดลเรียนจากตลาดอินเดีย ให้เทียบกับราคาไทยได้ยุติธรรมขึ้น ถ้าราคาไทยมีน้อยไปคืน 1.0"""
+    if "price_kind" not in phones:
+        return 1.0
+    t = phones[(phones["price_kind"] == "ราคาไทย") & (phones["price_inr"] > 0)]
+    if len(t) < THAI_FACTOR_MIN_ROWS:
+        return 1.0
+    ratio = float((t["price_thb"] / (t["price_inr"] * inr_to_thb)).median())
+    lo, hi = THAI_FACTOR_RANGE
+    return round(min(max(ratio, lo), hi), 2)
+
+
 def apply_ml(phones: pd.DataFrame, model: PriceModel, seg: Segments, inr_to_thb: float) -> pd.DataFrame:
-    """เพิ่มคอลัมน์ fair_price_thb, deal_ratio, deal_label, segment (index ต้องตรงกับตอน train)"""
+    """เพิ่มคอลัมน์ fair_price_thb, deal_ratio, deal_label, segment (index ต้องตรงกับตอน train)
+    fair_price_thb = ราคาที่โมเดลประเมิน (ตลาดอินเดีย) × อัตราแลกเปลี่ยน × ค่าปรับตามตลาดไทย"""
     out = phones.copy()
-    out["fair_price_thb"] = (model.fair_inr.reindex(out.index) * inr_to_thb).round(-1)
+    factor = thai_market_factor(out, inr_to_thb)
+    out.attrs["thai_factor"] = factor
+    out["fair_price_thb"] = (model.fair_inr.reindex(out.index) * inr_to_thb * factor).round(-1)
+    # สเปกหลักขาดตั้งแต่ 2 ช่อง (เช่น แบรนด์ไม่เปิดเผย RAM/แบต) ประเมินราคาที่ควรเป็นไม่ได้อย่างน่าเชื่อถือ
+    key_cols = [c for c in ("ram_gb", "battery_mah", "charging_w", "perf_score", "camera_mp") if c in out]
+    out.loc[out[key_cols].isna().sum(axis=1) >= 2, "fair_price_thb"] = np.nan
     out["deal_ratio"] = out["price_thb"] / out["fair_price_thb"]
     out["deal_label"] = out["deal_ratio"].map(deal_label)
     out["segment"] = seg.labels.reindex(out.index).fillna("")
