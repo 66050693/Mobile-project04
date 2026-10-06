@@ -1,0 +1,56 @@
+﻿brand_name,model,has_5G,has_NFC,has_IR,processor_name,ram,memory,battery_capacity(mAh),fast_charging(W),screen_size,refresh_rate,rear_camera,front_camera,rear_camera_count,os,source,note
+apple,Apple iPhone Duo,TRUE,TRUE,FALSE,Apple A20 Pro,,256,,,7.6,120,48,12,2,iOS v27,https://www.apple.com/th/iphone-duo/specs/,Apple ไม่เปิดเผย RAM/แบต/วัตต์ชาร์จ; จอใน 7.6 นิ้ว จอนอก 5.4 นิ้ว
+apple,Apple iPhone 18 Pro,TRUE,TRUE,FALSE,Apple A20 Pro,12,256,4056,,6.3,120,48,18,3,iOS v27,https://www.apple.com/th/iphone-18-pro/specs/,RAM/แบตจาก MacRumors/EU energy label (Apple ไม่ประกาศ)
+samsung,Samsung Galaxy Z Fold8 Ultra,TRUE,TRUE,,Snapdragon 8 Elite Gen 5 for Galaxy,12,256,5000,45,8.0,120,200,10,3,Android v17,https://www.samsung.com/au/mobile/buying-guide/galaxy-z-fold8-ultra-release-date-specs/,สเปกจาก Samsung AU/MY/CA (หน้าไทยโหลดด้วยสคริปต์)
+samsung,Samsung Galaxy Z Flip8,TRUE,TRUE,,Exynos 2600,12,256,4300,25,6.9,120,50,10,2,Android v17,https://www.samsung.com/th/smartphones/galaxy-z-flip8/specs/,ชิปและรีเฟรชเรตไทยจาก Thairath
+vivo,Vivo X Fold5,TRUE,TRUE,TRUE,Snapdragon 8 Gen 3,16,512,6000,80,8.03,120,50,20,3,Android v15,https://www.vivo.com/th/products/param/x-fold5,
+xiaomi,Xiaomi 17T,TRUE,TRUE,TRUE,Dimensity 8500 Ultra,12,256,6500,67,6.59,120,50,32,3,Android v16,https://www.mi.com/th/product/xiaomi-17t/specs/,เวอร์ชัน Android จากแหล่งรอง
+xiaomi,Xiaomi Redmi Note 17 Pro Max 5G,TRUE,TRUE,TRUE,Snapdragon 6 Gen 5,8,256,10000,100,6.83,120,50,32,2,,https://www.mi.com/th/product/redmi-note-17-pro-max-5g/specs/,
+xiaomi,Xiaomi Redmi Note 17 Pro 5G,TRUE,TRUE,TRUE,Snapdragon 6s Gen 4,6,256,8340,67,6.83,120,50,16,2,,https://www.mi.com/th/product/redmi-note-17-pro-5g/specs/,
+xiaomi,Xiaomi Redmi Note 17 5G,TRUE,TRUE,TRUE,Snapdragon 4 Gen 4,6,256,7700,45,6.99,120,50,16,1,Android v16,https://www.mi.com/th/product/redmi-note-17-5g/specs/,เวอร์ชัน Android จากแหล่งรอง
+poco,Poco F9 Ultra,TRUE,TRUE,TRUE,Snapdragon 8 Elite Gen 5,12,256,8050,100,6.9,185,200,32,3,Android v16,https://www.mi.com/th/product/poco-f9-ultra/specs/,เวอร์ชัน Android จากแหล่งรอง
+poco,Poco F9 Pro,TRUE,TRUE,TRUE,Snapdragon 8 Elite Gen 5,12,256,6330,100,6.59,185,200,32,3,Android v16,https://www.mi.com/th/product/poco-f9-pro/specs/,เวอร์ชัน Android จากแหล่งรอง
+poco,Poco M8s 5G,TRUE,TRUE,TRUE,Snapdragon 6s Gen 3,6,128,7000,33,6.9,144,50,8,1,Android v15,https://www.mi.com/th/product/poco-m8s-5g/specs/,เวอร์ชัน Android จาก GSMArena
+poco,Poco C81 Pro,FALSE,,FALSE,Unisoc T7250,4,64,6000,15,6.9,120,13,8,1,Android v15,https://www.mi.com/th/product/poco-c81-pro/specs/,4G; NFC ไม่ระบุในหน้าไทย
+oppo,OPPO Find X8 Pro,TRUE,TRUE,TRUE,Dimensity 9400,16,512,5910,80,6.78,120,50,32,4,Android v15,https://www.oppo.com/th/smartphones/series-find-x/find-x8-pro/specs/,
+oppo,OPPO Find X8,TRUE,TRUE,TRUE,Dimensity 9400,12,256,5630,80,6.59,120,50,32,3,Android v15,https://www.oppo.com/th/smartphones/series-find-x/find-x8/specs/,
+oppo,OPPO Reno16 F 5G,TRUE,TRUE,FALSE,Dimensity 7300 Energy,8,128,7000,80,6.57,120,50,50,3,Android v16,https://www.oppo.com/th/smartphones/series-reno/reno16-f/specs/,
+oppo,OPPO A7 Pro Max 5G,TRUE,TRUE,TRUE,Snapdragon 4 Gen 5,8,256,10000,80,6.78,120,50,50,2,Android v16,https://www.oppo.com/th/smartphones/series-a/a7-pro-max-5g/specs/,
+oppo,OPPO A7 Pro 5G,TRUE,TRUE,FALSE,Dimensity 6360 Max,8,128,8000,45,6.57,120,50,50,2,Android v16,https://www.oppo.com/th/smartphones/series-a/a7-pro-5g/specs/,
+realme,Realme 16 Pro+ 5G,TRUE,TRUE,TRUE,Snapdragon 7 Gen 4,12,256,7000,80,6.8,144,200,50,3,,https://www.realme.com/th/realme-16-pro-plus-5g/specs,
+realme,Realme 16 Pro 5G,TRUE,TRUE,TRUE,Dimensity 7300 Max,12,256,7000,80,6.78,144,200,50,2,,https://www.realme.com/th/realme-16-pro-5g/specs,
+realme,Realme 16 5G,TRUE,TRUE,TRUE,Dimensity 6400 Turbo,8,256,7000,60,6.57,120,50,50,2,,https://www.realme.com/th/realme-16-5g/specs,
+realme,Realme P4 Power 5G,TRUE,TRUE,TRUE,Dimensity 7400 Ultra,12,256,10001,80,6.8,144,50,16,2,,https://www.realme.com/th/realme-p4-power-5g/specs,
+realme,Realme 15 Pro 5G,TRUE,,TRUE,Snapdragon 7 Gen 4,12,256,7000,80,6.8,144,50,50,2,Android v15,https://www.realme.com/th/realme-15-pro-5g/specs,
+realme,Realme 15T 5G,TRUE,TRUE,TRUE,Dimensity 6400 Max,8,256,7000,60,6.57,120,50,50,2,Android v15,https://www.realme.com/th/realme-15t-5g/specs,
+realme,Realme GT 7,TRUE,,,Dimensity 9400e,12,512,7000,120,6.78,120,50,32,3,Android v15,https://www.realme.com/th/realme-gt-7-5g/specs,
+realme,Realme C100 5G,TRUE,FALSE,,Dimensity 6300,4,128,7000,45,6.8,144,50,5,1,,https://www.realme.com/th/realme-c100-5g/specs,
+realme,Realme C85 5G,TRUE,TRUE,,Dimensity 6300,,,7000,45,6.8,144,50,8,1,Android v15,https://www.realme.com/th/realme-c85-5g/specs,
+iqoo,iQOO 15R,TRUE,TRUE,,Snapdragon 8 Gen 5,12,,7600,100,6.59,144,50,32,,,https://www.iqoo.com/th/products/iqoo-15r,
+iqoo,iQOO Z11,TRUE,,,Snapdragon 7s Gen 4,12,256,9020,90,6.83,144,50,32,2,,https://www.iqoo.com/th/products/z11,
+iqoo,iQOO Z11x,TRUE,,,Dimensity 7400 Turbo,8,256,7200,44,,120,50,32,2,,https://www.iqoo.com/th/products/z11x,
+infinix,Infinix NOTE 60 Pro 5G,TRUE,,,Snapdragon 7s Gen 4,8,256,6500,90,6.78,144,50,13,,Android v16,https://droidsans.com/infinix-note-60-pro-and-note-edge-thailand-launch-details/,
+infinix,Infinix GT 50 Pro 5G,TRUE,TRUE,,Dimensity 8400 Ultimate,12,256,6500,45,6.78,144,50,13,2,Android v16,https://www.bnn.in.th/en/p/infinix-smartphone-gt-50-pro-12256-black-abyss-5g-4894947119767_zgeylq,
+infinix,Infinix NOTE Edge 5G,TRUE,,,Dimensity 7100,8,128,6500,45,6.78,120,50,13,,Android v16,https://droidsans.com/infinix-note-60-pro-and-note-edge-thailand-launch-details/,
+infinix,Infinix GT 30 5G,TRUE,,TRUE,Dimensity 7400,8,256,5500,45,6.78,144,64,13,2,Android v15,https://www.bnn.in.th/en/p/infinix-smartphone-gt-30-8256-blade-white-5g-4894947101083_r644qm,
+infinix,Infinix HOT 70,FALSE,,,Helio G100 Ultimate,4,128,6000,45,6.78,120,50,8,,Android v16,https://www.bnn.in.th/en/p/infinix-smartphone-hot70-4128-thermo-orange-4894947121753_dn8e8g,
+infinix,Infinix SMART 20,FALSE,,,Helio G81 Ultimate,4,64,5200,15,6.78,120,8,8,,Android v16,https://www.bnn.in.th/en/p/infinix-smartphone-smart20-464-shadow-black-4894947116520_rqnw78,
+tecno,Tecno POVA 8 Pro 5G,TRUE,,,Dimensity 7400 Ultimate,8,256,6500,45,6.78,144,50,13,2,Android v16,https://www.tecno-mobile.com/th/phones/product-detail/product/pova-8-pro-5g/,
+tecno,Tecno POVA 8 Pro 5G Tonino Lamborghini Limited Edition,TRUE,,,Dimensity 7400 Ultimate,12,256,6500,45,6.78,144,50,13,2,Android v16,https://www.tecno-mobile.com/th/phones/product-detail/product/pova-8-pro-5g/,
+tecno,Tecno POVA 8 5G,TRUE,,,Dimensity 7100,6,128,8000,45,6.77,144,50,13,1,Android v16,https://www.bnn.in.th/en/p/tecno-smartphone-pova-8-6128-helios-orange-5g-4894947132377_dn8kve,
+tecno,Tecno POVA 7 Ultra 5G,TRUE,,,Dimensity 8350 Ultimate,12,256,6000,70,6.67,144,108,13,2,Android v15,https://www.bnn.in.th/en/p/tecno-smartphone-pova-7-ultra-5g-12256gb-geek-white-5g-4894947088742_dn8ov6,
+tecno,Tecno POVA 7 5G,TRUE,,,Dimensity 7300 Ultimate,8,256,6000,45,6.78,144,50,13,,Android v15,https://www.bnn.in.th/en/p/tecno-smartphone-pova7-8256-oasis-green-5g-4894947089176_zpxg0o,
+tecno,Tecno SPARK 50 5G,TRUE,,,Dimensity 6400,,128,6500,45,6.78,120,50,8,,Android v16,https://www.bnn.in.th/en/p/tecno-smartphone-spark-50-6128gb-mint-green-5g-4894947118623_zj186v,
+tecno,Tecno Spark 50C,FALSE,,,Helio G81,4,128,5200,15,6.78,120,13,8,,Android v16,https://www.bnn.in.th/en/p/tecno-smartphone-spark-50c-4128gb-burgundy-red-f-4894947140730_zv41v4,
+tecno,Tecno SPARK 40 Pro,FALSE,,,Helio G100 Ultimate,8,256,5200,45,6.78,144,50,13,,Android v15,https://www.bnn.in.th/en/p/tecno-smartphone-spark-40-pro-8256gb-lake-blue-4894947093166_dl7v6e,
+tecno,Tecno SPARK 40 5G,TRUE,,TRUE,Dimensity 6400,4,128,6000,18,6.75,120,50,5,,Android v15,https://www.bnn.in.th/en/p/tecno-smartphone-spark-40-4128gb-bikaner-red-5g-4894947102134_d48jy1,
+tecno,Tecno SPARK Go 3,FALSE,,,Unisoc T7250,4,,5000,15,6.75,120,13,8,,Android v15,https://www.bnn.in.th/en/p/tecno-smartphone-spark-go3-4128gb-galaxy-blue-4894947105319_zewg99,
+honor,Honor Magic V6,TRUE,TRUE,TRUE,Snapdragon 8 Elite Gen 5,12,256,6660,80,7.95,120,50,20,3,Android v16,https://www.gsmarena.com/honor_magic_v6_5g-14518.php,
+honor,Honor Magic 8 Pro,TRUE,,TRUE,Snapdragon 8 Elite Gen 5,12,256,7100,100,6.71,120,50,50,3,Android v16,GSMArena (สเปกรุ่นสากล),
+honor,Honor 600 Pro,TRUE,TRUE,TRUE,Snapdragon 8 Elite,12,256,7000,80,6.57,120,200,50,3,Android v16,https://www.gsmarena.com/honor_600_pro_5g-14604.php,
+honor,Honor 600,TRUE,TRUE,TRUE,Snapdragon 7 Gen 4,8,128,7000,80,6.57,120,200,50,2,Android v16,https://www.gsmarena.com/honor_600_5g-14605.php,
+honor,Honor 600 Lite 5G,TRUE,TRUE,,Dimensity 7100 Elite,8,128,6520,45,6.6,120,108,16,2,Android v16,https://www.gsmarena.com/honor_600_lite_5g-14522.php,
+honor,Honor X9d,TRUE,TRUE,,Snapdragon 6 Gen 4,8,256,8300,66,6.79,120,108,16,2,Android v15,https://m.gsmarena.com/honor_x9d-ampp-14176.php,
+honor,Honor X7e,FALSE,TRUE,FALSE,Helio G81 Ultra,6,128,7500,45,6.61,120,50,5,1,Android v16,https://www.gsmarena.com/honor_x7e-14677.php,
+honor,Honor X6e,FALSE,FALSE,,Helio G81 Ultra,4,128,7500,45,6.61,120,50,5,1,Android v16,https://www.gsmarena.com/honor_x6e-14843.php,
+honor,Honor Play10,TRUE,TRUE,,Snapdragon 6s Gen 3,8,128,7000,45,6.8,120,50,5,1,Android v15,https://www.gsmarena.com/honor_play10_5g-14713.php,
